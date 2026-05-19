@@ -36,13 +36,8 @@ variable (r : ReedyStructure W₁ W₂ α) {D : Type*} [Category D]
 -- Note: contrary to C.4.9 in Riehl-Verity, *Elements of ∞-category theory*,
 -- we use `< a` instead of `≤ a`, so that `r.sk ⊥` is empty
 def skYoneda (a : α) : Subfunctor₂ (yoneda (C := C)) where
-  obj X Y := setOf (fun f ↦ r.degHom f < a)
-  map₁ g Z f hf := by
-    obtain ⟨Z, c, d, hc, hd, rfl, h⟩ := r.exists_fac f
-    refine lt_of_le_of_lt ?_ hf
-    dsimp
-    rw [h, Category.assoc]
-    apply r.degHom_le
+  obj _ _ := setOf (fun f ↦ r.degHom f < a)
+  map₁ := sorry
   map₂ := sorry
 
 lemma monotone_skYoneda : Monotone r.skYoneda := sorry

@@ -53,7 +53,7 @@ lemma le₂ {X Y : C} (f : X ⟶ Y) (hf : W₂ f) : r.deg X ≤ r.deg Y := by
   · exact (r.lt₂ f hf hf').le
 
 include r in
-lemma subsingleton_mapFactorizationData {X Y : C} (f : X ⟶ Y) :
+lemma subsingleton_mapFactorizationData ⦃X Y : C⦄ (f : X ⟶ Y) :
     Subsingleton (W₁.MapFactorizationData W₂ f) := by
   have := (r.nonempty_unique f).some
   infer_instance
@@ -74,7 +74,8 @@ lemma exists_fac {X Y : C} (f : X ⟶ Y) :
 
 -- This is needed for the definition of `skYoneda` in the file `Reedy/Skeleton.lean`.
 lemma degHom_le {X Z Y : C} (f : X ⟶ Z) (g : Z ⟶ Y) :
-    r.degHom (f ≫ g) ≤ r.deg Z := sorry
+    r.degHom (f ≫ g) ≤ r.deg Z := by
+  sorry
 
 end ReedyStructure
 
