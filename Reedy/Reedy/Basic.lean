@@ -6,8 +6,8 @@ Authors: Joël Riou
 module
 
 public import Reedy.MorphismProperty.Identities
+public import Reedy.MorphismProperty.Factorization
 public import Mathlib.CategoryTheory.MorphismProperty.Composition
-public import Mathlib.CategoryTheory.MorphismProperty.Factorization
 public import Mathlib.Order.SuccPred.Basic
 
 /-!
@@ -39,6 +39,17 @@ variable {C : Type u} [SmallCategory C] {W₁ W₂ : MorphismProperty C}
   [W₁.IsMultiplicative] [W₂.IsMultiplicative]
   {α : Type*} [LinearOrder α] [OrderBot α] [SuccOrder α] [WellFoundedLT α]
   (r : ReedyStructure W₁ W₂ α)
+
+@[simps]
+protected def op : ReedyStructure W₂.op W₁.op α where
+  deg := r.deg ∘ Opposite.unop
+  lt₁ f hf hf' := r.lt₂ f.unop hf (by
+    simpa [MorphismProperty.identities_op_iff] using hf')
+  lt₂ f hf hf' := r.lt₁ f.unop hf (by
+    simpa [MorphismProperty.identities_op_iff] using hf')
+  nonempty_unique f :=
+    MorphismProperty.MapFactorizationData.opEquiv.uniqueCongr.nonempty_congr.1
+      (r.nonempty_unique f.unop)
 
 lemma le₁ {X Y : C} (f : X ⟶ Y) (hf : W₁ f) : r.deg Y ≤ r.deg X := by
   by_cases hf' : MorphismProperty.identities C f

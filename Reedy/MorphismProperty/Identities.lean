@@ -18,8 +18,18 @@ universe u
 
 namespace CategoryTheory
 
-abbrev MorphismProperty.identities (C : Type*) [Category* C] :
-    MorphismProperty C :=
+namespace MorphismProperty
+
+variable (C : Type*) [Category* C]
+
+abbrev identities : MorphismProperty C :=
   .ofHoms (fun X ↦ 𝟙 X)
+
+variable {C} in
+lemma identities_op_iff {X Y : Cᵒᵖ} (f : X ⟶ Y) :
+    identities Cᵒᵖ f ↔ identities C f.unop :=
+  sorry
+
+end MorphismProperty
 
 end CategoryTheory
