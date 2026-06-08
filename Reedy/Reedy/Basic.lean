@@ -92,27 +92,18 @@ lemma exists_fac {X Y : C} (f : X ⟶ Y) :
 lemma degHom_le {X Z Y : C} (f : X ⟶ Z) (g : Z ⟶ Y) :
     r.degHom (f ≫ g) ≤ r.deg Z := by
   -- the argument is essentially in the diagram of lemma C.4.7
-  let factf := r.mapFactorizationData f
-  let factg := r.mapFactorizationData (factf.p ≫ g)
+  obtain ⟨Zf, f₁, f₂, hf₁, hf₂, fac_f, eq_f⟩ := r.exists_fac f
+  obtain ⟨Zg, g₁, g₂, hg₁, hg₂, fac_g, eq_g⟩ := r.exists_fac g
+  obtain ⟨Zh, h₁, h₂, hh₁, hh₂, fac_h, eq_h⟩ := r.exists_fac (f₂ ≫ g₁)
   let factfg : W₁.MapFactorizationData W₂ (f ≫ g) :=
-    { Z := factg.Z
-      i := factf.i ≫ factg.i
-      p := factg.p
-      fac := by
-        calc
-          (factf.i ≫ factg.i) ≫ factg.p = factf.i ≫ (factg.i ≫ factg.p) := by rw [Category.assoc]
-          _ = factf.i ≫ (factf.p ≫ g) := by rw [factg.fac]
-          _ = (factf.i ≫ factf.p) ≫ g := by rw [← Category.assoc]
-          _ = f ≫ g := by rw [factf.fac]
-      hi := MorphismProperty.comp_mem W₁ factf.i factg.i factf.hi factg.hi
-      hp := factg.hp }
-  have h : r.mapFactorizationData (f ≫ g) = factfg := by {
-    haveI := r.subsingleton_mapFactorizationData (f ≫ g)
-    exact Subsingleton.elim _ _
-  }
-  dsimp [degHom]
-  rw [h]
-  simpa [factfg] using (r.le₁ factg.i factg.hi).trans (r.le₂ factf.p factf.hp)
+    { Z := Zh
+      i := f₁ ≫ h₁
+      p := h₂ ≫ g₂
+      fac := by simp [reassoc_of% fac_h, reassoc_of% fac_f, fac_g]
+      hi := W₁.comp_mem _ _ hf₁ hh₁
+      hp := W₂.comp_mem _ _ hh₂ hg₂ }
+  rw [r.degHom_eq factfg]
+  exact (r.le₁ _ hh₁).trans (r.le₂ _ hf₂)
 
 end ReedyStructure
 
