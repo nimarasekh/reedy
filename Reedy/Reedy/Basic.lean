@@ -87,7 +87,27 @@ lemma exists_fac {X Y : C} (f : X ⟶ Y) :
 lemma degHom_le {X Z Y : C} (f : X ⟶ Z) (g : Z ⟶ Y) :
     r.degHom (f ≫ g) ≤ r.deg Z := by
   -- the argument is essentially in the diagram of lemma C.4.7
-  sorry
+  let factf := r.mapFactorizationData f
+  let factg := r.mapFactorizationData (factf.p ≫ g)
+  let factfg : W₁.MapFactorizationData W₂ (f ≫ g) :=
+    { Z := factg.Z
+      i := factf.i ≫ factg.i
+      p := factg.p
+      fac := by
+        calc
+          (factf.i ≫ factg.i) ≫ factg.p = factf.i ≫ (factg.i ≫ factg.p) := by rw [Category.assoc]
+          _ = factf.i ≫ (factf.p ≫ g) := by rw [factg.fac]
+          _ = (factf.i ≫ factf.p) ≫ g := by rw [← Category.assoc]
+          _ = f ≫ g := by rw [factf.fac]
+      hi := MorphismProperty.comp_mem W₁ factf.i factg.i factf.hi factg.hi
+      hp := factg.hp }
+  have h : r.mapFactorizationData (f ≫ g) = factfg := by {
+    haveI := r.subsingleton_mapFactorizationData (f ≫ g)
+    exact Subsingleton.elim _ _
+  }
+  dsimp [degHom]
+  rw [h]
+  simpa [factfg] using (r.le₁ factg.i factg.hi).trans (r.le₂ factf.p factf.hp)
 
 end ReedyStructure
 
