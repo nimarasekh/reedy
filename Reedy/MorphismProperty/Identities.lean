@@ -27,8 +27,21 @@ abbrev identities : MorphismProperty C :=
 
 variable {C} in
 lemma identities_op_iff {X Y : Cᵒᵖ} (f : X ⟶ Y) :
-    identities Cᵒᵖ f ↔ identities C f.unop :=
-  sorry
+    identities Cᵒᵖ f ↔ identities C f.unop := by
+  constructor
+    <;> simp only [ofHoms_iff]
+    <;> rintro ⟨Z, h⟩
+    <;> rw [Arrow.mk_eq_mk_iff] at h
+    <;> obtain ⟨h_dom, h_cod, h_f⟩ := h
+  · exists Opposite.unop Z
+    rw [h_f, Arrow.mk_eq_mk_iff]
+    simp only [Category.id_comp, eqToHom_trans, eqToHom_unop, Opposite.unop_inj_iff]
+    exact ⟨h_cod, h_dom, True.intro⟩
+  · exists Opposite.op Z
+    have h_unop_op: f = f.unop.op := by simp
+    rw [h_unop_op, h_f, Arrow.mk_eq_mk_iff]
+    simp only [Category.id_comp, eqToHom_trans, eqToHom_op, Opposite.op_unop]
+    exact ⟨by rw [<- h_cod], by rw [<- h_dom], True.intro⟩
 
 end MorphismProperty
 
