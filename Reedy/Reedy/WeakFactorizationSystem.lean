@@ -7,6 +7,8 @@ module
 
 public import Mathlib.CategoryTheory.MorphismProperty.WeakFactorizationSystem
 public import Reedy.Arrow.ObjectProperty
+public import Reedy.MorphismProperty.Retracts
+public import Reedy.ObjectProperty.Retracts
 public import Reedy.Reedy.Skeleton
 
 /-!
@@ -40,9 +42,13 @@ def left : MorphismProperty (C ⥤ D) :=
 def right : MorphismProperty (C ⥤ D) :=
   ⨅ (X : C), .ofArrowObj (P₂.arrowObj.inverseImage (r.relativeMatchingFunctor X))
 
-instance [P₁.IsStableUnderRetracts] : (r.left P₁).IsStableUnderRetracts := sorry
+instance [P₁.IsStableUnderRetracts] : (r.left P₁).IsStableUnderRetracts := by
+  dsimp [left]
+  infer_instance
 
-instance [P₂.IsStableUnderRetracts] : (r.right P₂).IsStableUnderRetracts := sorry
+instance [P₂.IsStableUnderRetracts] : (r.right P₂).IsStableUnderRetracts := by
+  dsimp [right]
+  infer_instance
 
 -- C.5.7
 instance [P₁.HasFactorization P₂] : (r.left P₁).HasFactorization (r.right P₂) := sorry

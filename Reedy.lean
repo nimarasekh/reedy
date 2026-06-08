@@ -4,6 +4,8 @@ import Reedy.KanExtension.FullyFaithful
 import Reedy.MorphismProperty.Factorization
 import Reedy.MorphismProperty.HasTwoOutOfThreeProperty
 import Reedy.MorphismProperty.Identities
+import Reedy.MorphismProperty.Retracts
+import Reedy.ObjectProperty.Retracts
 import Reedy.Reedy.Basic
 import Reedy.Reedy.ModelCategory
 import Reedy.Reedy.RelativeCellComplex
