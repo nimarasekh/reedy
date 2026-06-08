@@ -77,6 +77,11 @@ noncomputable def mapFactorizationData {X Y : C} (f : X ⟶ Y) :
 
 @[no_expose]
 noncomputable def degHom {X Y : C} (f : X ⟶ Y) : α := r.deg (r.mapFactorizationData f).Z
+lemma degHom_eq {X Y : C} {f : X ⟶ Y} (h : W₁.MapFactorizationData W₂ f) :
+    r.degHom f = r.deg h.Z := by
+  have := r.subsingleton_mapFactorizationData
+  rw [← Subsingleton.elim (r.mapFactorizationData f) h]
+  rfl
 
 lemma exists_fac {X Y : C} (f : X ⟶ Y) :
     ∃ (Z : C) (a : X ⟶ Z) (b : Z ⟶ Y), W₁ a ∧ W₂ b ∧ a ≫ b = f ∧ r.degHom f = r.deg Z :=
