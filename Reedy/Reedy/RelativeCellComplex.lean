@@ -42,9 +42,10 @@ def skYoneda (a : α) : Subfunctor₂ (yoneda (C := C)) where
 lemma monotone_skYoneda : Monotone r.skYoneda :=
   fun _ _ h _ _ _ hf ↦ lt_of_lt_of_le hf h
 
+@[simp]
 lemma skYoneda_bot : r.skYoneda ⊥ = ⊥ := by aesop
 
-lemma sup_skYoneda [NoMaxOrder α] : ⨆ a, r.skYoneda a = ⊤ := by
+lemma iSup_skYoneda [NoMaxOrder α] : ⨆ a, r.skYoneda a = ⊤ := by
   rw [← top_le_iff]
   intro U V f _
   simp only [Subfunctor₂.iSup_obj, skYoneda_obj, Set.mem_iUnion, Set.mem_setOf_eq]
@@ -68,14 +69,17 @@ abbrev Cell (a : α) := { X : C // r.deg X = a }
 
 def basicCell (a : α) (c : r.Cell a) := (r.externalUnionProd c.val).ι
 
+set_option backward.defeqAttrib.useBackward true in
 -- C.4.13 in Riehl-Verity, *Elements of ∞-category theory*
 noncomputable def relativeCellComplex [NoMaxOrder α] :
     RelativeCellComplex r.basicCell (Subfunctor₂.ι (⊥ : Subfunctor₂ yoneda)) where
   F := r.monotone_skYoneda.functor ⋙ Subfunctor₂.toFunctorFunctor yoneda
-  isoBot := sorry
+  isoBot := Subfunctor₂.eqToIso (by simp)
   isWellOrderContinuous := sorry
   incl := { app a := (r.skYoneda a).ι }
-  isColimit := sorry
+  isColimit := by
+    -- use `iSup_skYoneda`
+    sorry
   attachCells a ha :=
     { ι := r.Cell a
       π := id
@@ -83,9 +87,16 @@ noncomputable def relativeCellComplex [NoMaxOrder α] :
       cofan₂ := _
       isColimit₁ := coproductIsCoproduct _
       isColimit₂ := coproductIsCoproduct _
-      m := sorry
-      g₁ := sorry
-      g₂ := sorry
+      m := Limits.Sigma.map (fun x ↦ (r.externalUnionProd x).ι)
+      g₁ := by
+        refine Sigma.desc (fun x ↦ ?_)
+        dsimp
+        -- needs a version of `SSet.Subcomplex.lift` for sub-bi-functors
+        sorry
+      g₂ := by
+        refine Sigma.desc (fun x ↦ ?_)
+        dsimp
+        sorry
       hm := sorry
 -- see https://github.com/leanprover-community/mathlib4/pull/38530 for similar proofs
       isPushout := sorry }

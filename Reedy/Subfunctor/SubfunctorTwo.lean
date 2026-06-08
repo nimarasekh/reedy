@@ -120,6 +120,22 @@ def toFunctorFunctor : Subfunctor₂ F ⥤ C ⥤ D ⥤ Type w where
   obj := toFunctor
   map f := { app U := { app V := ↾(fun x ↦ ⟨x.val, leOfHom f _ _ x.prop⟩) } }
 
+
+section
+
+variable {A₁ A₂ : Subfunctor₂ F}
+
+@[simps]
+def homOfLE (h : A₁ ≤ A₂) : A₁.toFunctor ⟶ A₂.toFunctor where
+  app U := { app V := ↾fun x ↦ ⟨x.val, h _ _ x.prop⟩ }
+
+@[simps]
+protected def eqToIso (h : A₁ = A₂) : A₁.toFunctor ≅ A₂.toFunctor where
+  hom := homOfLE h.le
+  inv := homOfLE h.symm.le
+
+end
+
 end Subfunctor₂
 
 end CategoryTheory
