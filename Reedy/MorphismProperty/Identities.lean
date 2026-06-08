@@ -38,8 +38,7 @@ lemma identities_op_iff {X Y : Cᵒᵖ} (f : X ⟶ Y) :
     simp only [Category.id_comp, eqToHom_trans, eqToHom_unop, Opposite.unop_inj_iff]
     exact ⟨h_cod, h_dom, True.intro⟩
   · exists Opposite.op Z
-    have h_unop_op: f = f.unop.op := by simp
-    rw [h_unop_op, h_f, Arrow.mk_eq_mk_iff]
+    rw [← Quiver.Hom.op_unop f, h_f, Arrow.mk_eq_mk_iff]
     simp only [Category.id_comp, eqToHom_trans, eqToHom_op, Opposite.op_unop]
     exact ⟨by rw [<- h_cod], by rw [<- h_dom], True.intro⟩
 
