@@ -120,7 +120,6 @@ def toFunctorFunctor : Subfunctor₂ F ⥤ C ⥤ D ⥤ Type w where
   obj := toFunctor
   map f := { app U := { app V := ↾(fun x ↦ ⟨x.val, leOfHom f _ _ x.prop⟩) } }
 
-
 section
 
 variable {A₁ A₂ : Subfunctor₂ F}
