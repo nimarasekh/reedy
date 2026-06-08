@@ -83,8 +83,12 @@ variable {F : C ⥤ Type w₁} {G : D ⥤ Type w₂}
 
 def externalProd : Subfunctor₂ (externalProduct F G) where
   obj U V := Set.prod (A.obj U) (B.obj V)
-  map₁ := sorry
-  map₂ := sorry
+  map₁ _ _ := by
+    rintro ⟨x, y⟩ ⟨hx, hy⟩
+    exact ⟨A.map _ hx, hy⟩
+  map₂ _ _ _ _ := by
+    rintro ⟨x, y⟩ ⟨hx, hy⟩
+    exact ⟨hx, B.map _ hy⟩
 
 -- this is an "external" version of `SSet.Subcomplex.unionProd`
 def unionExternalProd : Subfunctor₂ (FunctorToTypes.externalProduct F G) :=
