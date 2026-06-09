@@ -21,7 +21,7 @@ universe w v v' u u'
 namespace CategoryTheory
 
 variable {C : Type u} [Category.{v} C] {D : Type u'} [Category.{v'} D]
-  (F : C ⥤ D ⥤ Type w)
+  (F G : C ⥤ D ⥤ Type w)
 
 @[ext]
 structure Subfunctor₂ where
@@ -135,6 +135,63 @@ protected def eqToIso (h : A₁ = A₂) : A₁.toFunctor ≅ A₂.toFunctor wher
   inv := homOfLE h.symm.le
 
 end
+
+section
+
+variable {G} (f : F ⟶ G)
+
+def range : Subfunctor₂ G where
+  obj U V := Set.range ((f.app U).app V)
+  map₁ := sorry
+  map₂ := sorry
+
+/-- The morphism `G ⟶ Subfunctor₂.range f` induced by `f : F ⟶ G`. -/
+abbrev toRange : F ⟶ (Subfunctor₂.range f).toFunctor where
+  app U := { app V := ↾(fun x ↦ ⟨(f.app _).app _ x, _, rfl⟩) }
+  naturality := sorry
+
+@[simp, reassoc]
+lemma toRange_ι : toRange f ≫ (Subfunctor₂.range f).ι = f := rfl
+
+set_option backward.defeqAttrib.useBackward true in
+@[simp]
+lemma toRange_app_val {U : C} {V : D} (x : (F.obj U).obj V) :
+    dsimp% (((toRange f).app U).app V x).val = (f.app U).app V x := rfl
+
+instance : Epi (toRange f) := sorry
+
+instance [Mono f] : Mono (toRange f) :=
+  mono_of_mono_fac (toRange_ι f)
+
+instance [Mono f] : IsIso (toRange f) :=
+  sorry
+
+lemma range_eq_top_iff : Subfunctor₂.range f = ⊤ ↔ Epi f := by
+  sorry
+
+lemma range_eq_top [Epi f] : Subfunctor₂.range f = ⊤ := by
+  rwa [range_eq_top_iff]
+
+end
+
+section
+
+variable {G} (f : F ⟶ G) {B : Subfunctor₂ G} (hf : range f ≤ B)
+
+def lift : F ⟶ B.toFunctor where
+  app U := { app V := ↾(fun x ↦ ⟨(f.app _ ).app _ x, hf _ _ ⟨_, rfl⟩ ⟩) }
+  naturality := sorry
+
+@[reassoc (attr := simp)]
+lemma lift_ι : lift f hf ≫ B.ι = f := rfl
+
+set_option backward.defeqAttrib.useBackward true in
+@[simp]
+lemma lift_app_coe {U : C} {V : D} (x : (F.obj U).obj V) :
+    dsimp% (((lift f hf).app _).app _ x).1 = (f.app _).app _ x := rfl
+
+end
+
 
 end Subfunctor₂
 
