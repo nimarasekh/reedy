@@ -149,6 +149,13 @@ def range : Subfunctor₂ G where
   map₁ := sorry
   map₂ := sorry
 
+variable (F) in
+lemma range_id : range (𝟙 F) = ⊤ := by aesop
+
+set_option backward.defeqAttrib.useBackward true in
+@[simp]
+lemma range_ι (G : Subfunctor₂ F) : range G.ι = G := by aesop
+
 /-- The morphism `G ⟶ Subfunctor₂.range f` induced by `f : F ⟶ G`. -/
 abbrev toRange : F ⟶ (Subfunctor₂.range f).toFunctor where
   app U := { app V := ↾(fun x ↦ ⟨(f.app _).app _ x, _, rfl⟩) }
