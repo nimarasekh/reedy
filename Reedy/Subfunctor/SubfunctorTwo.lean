@@ -136,6 +136,8 @@ protected def eqToIso (h : A₁ = A₂) : A₁.toFunctor ≅ A₂.toFunctor wher
 
 end
 
+-- claim https://github.com/joelriou/reedy/issues/14
+-- if you work on the following proofs
 section
 
 variable {G} (f : F ⟶ G)
