@@ -8,7 +8,9 @@ module
 public import Mathlib.AlgebraicTopology.RelativeCellComplex.Basic
 public import Mathlib.CategoryTheory.Limits.Types.Pullbacks
 public import Mathlib.CategoryTheory.Limits.Types.Pushouts
+public import Mathlib.CategoryTheory.Limits.Lattice
 public import Reedy.Reedy.Basic
+public import Reedy.Subfunctor.Colimits
 public import Reedy.Subfunctor.ExternalUnionProd
 
 /-!
@@ -47,6 +49,7 @@ lemma monotone_skYoneda : Monotone r.skYoneda :=
 @[simp]
 lemma skYoneda_bot : r.skYoneda ⊥ = ⊥ := by aesop
 
+@[simp]
 lemma iSup_skYoneda [NoMaxOrder α] : ⨆ a, r.skYoneda a = ⊤ := by
   rw [← top_le_iff]
   intro U V f _
@@ -180,9 +183,11 @@ noncomputable def relativeCellComplex [NoMaxOrder α] :
     -- the field `isColimit` below
     sorry
   incl := { app a := (r.skYoneda a).ι }
-  isColimit := by
-    -- use `iSup_skYoneda`
-    sorry
+  isColimit :=
+    IsColimit.ofIsoColimit
+      (isColimitOfPreserves (Subfunctor₂.toFunctorFunctor _)
+      (CompleteLattice.colimitCocone r.monotone_skYoneda.functor).isColimit)
+        (Cocone.ext (Subfunctor₂.eqToIso (by simp) ≪≫ Subfunctor₂.topIso _))
   attachCells a ha :=
     { ι := r.Cell a
       π := id

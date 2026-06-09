@@ -13,6 +13,7 @@ import Reedy.Reedy.RelativeCellComplex
 import Reedy.Reedy.SimplexCategory
 import Reedy.Reedy.Skeleton
 import Reedy.Reedy.WeakFactorizationSystem
+import Reedy.Subfunctor.Colimits
 import Reedy.Subfunctor.ExternalUnionProd
 import Reedy.Subfunctor.SubfunctorTwo
 import Reedy.WeightedLimits.Colimits
