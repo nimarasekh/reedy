@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Joël Riou
+Authors: Joël Riou, Aras Ergus
 -/
 module
 
@@ -19,7 +19,6 @@ namespace CategoryTheory.ObjectProperty
 instance {C D : Type*} [Category* C] [Category* D] (P : ObjectProperty D) (F : C ⥤ D)
     [P.IsStableUnderRetracts] :
     (P.inverseImage F).IsStableUnderRetracts where
-  of_retract h hX :=
-    sorry
+  of_retract h := prop_of_retract P (h.map F)
 
 end CategoryTheory.ObjectProperty
