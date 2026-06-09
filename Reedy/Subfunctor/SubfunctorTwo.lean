@@ -209,6 +209,23 @@ lemma lift_app_coe {U : C} {V : D} (x : (F.obj U).obj V) :
 
 end
 
+section
+
+variable (F)
+
+@[simps! inv_app_app_hom_apply]
+def topIso : ((⊤ : Subfunctor₂ F).toFunctor) ≅ F :=
+  NatIso.ofComponents
+    (fun U ↦ NatIso.ofComponents (fun V ↦
+      (Equiv.Set.univ ((F.obj U).obj V)).toIso))
+
+@[simp]
+lemma topIso_hom : (topIso F).hom = Subfunctor₂.ι _ := rfl
+
+@[reassoc (attr := simp)]
+lemma topIso_inv_ι : (topIso F).inv ≫ Subfunctor₂.ι _ = 𝟙 _ := rfl
+
+end
 
 end Subfunctor₂
 
