@@ -146,8 +146,14 @@ variable {G} (f : F ⟶ G)
 @[simps]
 def range : Subfunctor₂ G where
   obj U V := Set.range ((f.app U).app V)
-  map₁ := sorry
-  map₂ := sorry
+  map₁ g V := by
+    rintro x ⟨a, rfl⟩
+    refine ⟨(F.map g).app V a, ?_⟩
+    change (F.map g ≫ f.app _).app V a = (f.app _ ≫ G.map g).app V a
+    simp
+  map₂ U _ _ g := by
+    rintro _ ⟨a,rfl⟩
+    exact ⟨(F.obj U).map g a, CategoryTheory.NatTrans.naturality_apply _ _ _⟩
 
 variable (F) in
 lemma range_id : range (𝟙 F) = ⊤ := by aesop
@@ -203,23 +209,6 @@ lemma lift_app_coe {U : C} {V : D} (x : (F.obj U).obj V) :
 
 end
 
-section
-
-variable (F)
-
-@[simps! inv_app_app_hom_apply]
-def topIso : ((⊤ : Subfunctor₂ F).toFunctor) ≅ F :=
-  NatIso.ofComponents
-    (fun U ↦ NatIso.ofComponents (fun V ↦
-      (Equiv.Set.univ ((F.obj U).obj V)).toIso))
-
-@[simp]
-lemma topIso_hom : (topIso F).hom = Subfunctor₂.ι _ := rfl
-
-@[reassoc (attr := simp)]
-lemma topIso_inv_ι : (topIso F).inv ≫ Subfunctor₂.ι _ = 𝟙 _ := rfl
-
-end
 
 end Subfunctor₂
 
