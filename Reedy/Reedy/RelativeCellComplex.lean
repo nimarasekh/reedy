@@ -195,9 +195,13 @@ lemma isPullback [NoMaxOrder α] (a : α) : IsPullback (t r a) (l r a) (ρ r a) 
             refine (IsPullback.isLimit ?_)
             rw [Types.isPullback_iff]
             refine ⟨NatTrans.congr_app (NatTrans.congr_app (w r a) U) V,
-              ?_, ?_⟩
-            · dsimp
-              sorry
+                fun x y ⟨h₁, h₂⟩ ↦ ?_, ?_⟩
+            · dsimp at x y h₁ h₂
+              obtain ⟨cx, ⟨x, hx⟩, rfl⟩ := r.ιSigmaExternalUnionProd_jointly_surjective x
+              obtain ⟨cy, ⟨y, hy⟩, rfl⟩ := r.ιSigmaExternalUnionProd_jointly_surjective y
+              obtain rfl : cx = cy := sorry
+              obtain rfl : x = y := sorry
+              rfl
             · dsimp
               sorry))))⟩
 
