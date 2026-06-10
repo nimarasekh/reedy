@@ -106,7 +106,10 @@ noncomputable abbrev ιSigmaExternalUnionProd {a : α} (c : r.Cell a) :
 lemma ιSigmaExternalUnionProd_jointly_surjective {a : α} {U : C} {V : Cᵒᵖ}
     (x : ((sigmaExternalUnionProd r a).obj U).obj V) :
     ∃ (c : r.Cell a) (y : _), ((r.ιSigmaExternalUnionProd c).app U).app V y = x := by
-  sorry
+  obtain ⟨⟨c⟩, y, rfl⟩ := Types.jointly_surjective_of_isColimit
+    (isColimitOfPreserves ((evaluation _ _).obj U ⋙ (evaluation _ _).obj V)
+      (coproductIsCoproduct _)) x
+  exact ⟨c, y, rfl⟩
 
 noncomputable abbrev sigmaExternalProduct (a : α) : C ⥤ Cᵒᵖ ⥤ Type u :=
   ∐ fun (c : r.Cell a) ↦
@@ -121,7 +124,10 @@ noncomputable abbrev ιSigmaExternalProduct {a : α} (c : r.Cell a) :
 lemma ιSigmaExternalProduct_jointly_surjective {a : α} {U : C} {V : Cᵒᵖ}
     (x : ((r.sigmaExternalProduct a).obj U).obj V) :
     ∃ (c : r.Cell a) (y : _), ((r.ιSigmaExternalProduct c).app U).app V y = x := by
-  sorry
+  obtain ⟨⟨c⟩, y, rfl⟩ := Types.jointly_surjective_of_isColimit
+    (isColimitOfPreserves ((evaluation _ _).obj U ⋙ (evaluation _ _).obj V)
+      (coproductIsCoproduct _)) x
+  exact ⟨c, y, rfl⟩
 
 namespace relativeCellComplex
 
