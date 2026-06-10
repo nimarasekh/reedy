@@ -148,9 +148,8 @@ def range : Subfunctor₂ G where
   obj U V := Set.range ((f.app U).app V)
   map₁ g V := by
     rintro x ⟨a, rfl⟩
-    refine ⟨(F.map g).app V a, ?_⟩
-    change (F.map g ≫ f.app _).app V a = (f.app _ ≫ G.map g).app V a
-    simp
+    exact ⟨(F.map g).app V a,
+      ConcreteCategory.congr_hom (NatTrans.congr_app (f.naturality g) V) a⟩
   map₂ U _ _ g := by
     rintro _ ⟨_, rfl⟩
     exact ⟨(F.obj U).map g _, CategoryTheory.NatTrans.naturality_apply _ _ _⟩
