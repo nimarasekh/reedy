@@ -4,6 +4,8 @@ import Reedy.Arrow.ObjectProperty
 import Reedy.KanExtension.FullyFaithful
 import Reedy.Limits.Colim
 import Reedy.Limits.FunctorCategoryMono
+import Reedy.Limits.Op
+import Reedy.Limits.PiConst
 import Reedy.MorphismProperty.Factorization
 import Reedy.MorphismProperty.HasTwoOutOfThreeProperty
 import Reedy.MorphismProperty.Identities

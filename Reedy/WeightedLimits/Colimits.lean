@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2026 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Joël Riou
+Authors: Joël Riou, Nima Rasekh, Lyne Moser
 -/
 module
 
@@ -9,6 +9,8 @@ public import Mathlib.CategoryTheory.Limits.Preserves.FunctorCategory
 public import Mathlib.CategoryTheory.Limits.Preserves.Opposites
 public import Reedy.Adjunction.ParametrizedColimits
 public import Reedy.Limits.Colim
+public import Reedy.Limits.PiConst
+public import Reedy.Limits.Op
 
 /-!
 # Weighted colimits
@@ -26,19 +28,6 @@ universe w v u
 namespace CategoryTheory.Limits
 
 open Opposite
-
--- to be moved to a separate file
-section
-
-variable {J C : Type*} [Category* J] [Category* C]
-
-instance [HasColimitsOfShape J C] : HasColimitsOfShape J Cᵒᵖᵒᵖ :=
-  Adjunction.hasColimitsOfShape_of_equivalence (opOpEquivalence C).functor
-
-instance [HasColimitsOfShape J C] : HasColimitsOfShape Jᵒᵖᵒᵖ C :=
-  hasColimitsOfShape_of_equivalence (opOpEquivalence _).symm
-
-end
 
 -- See A.6 in Riehl-Verity (here, we do not need the enriched version)
 
@@ -114,7 +103,6 @@ protected abbrev yoneda (F : J ⥤ C) (j : J) :
 
 set_option backward.defeqAttrib.useBackward true in
 def isColimitYoneda (F : J ⥤ C) (j : J) : (WeightedCocone.yoneda F j).IsColimit where
-  -- use that the category of elements has an initial object
   desc s := WeightedCocone.ι s (𝟙 j)
   fac s x := Cocone.w s ((Functor.Elements.isInitial j).to x.unop).op
   uniq s m hm := by
@@ -126,15 +114,31 @@ section
 
 variable [HasColimitsOfSize.{v, max u w} C]
 
+set_option backward.defeqAttrib.useBackward true in
+@[no_expose]
 noncomputable def weightedColim : (Jᵒᵖ ⥤ Type w) ⥤ (J ⥤ C) ⥤ C where
   obj P := (Functor.whiskeringLeft _ _ _).obj (CategoryOfElements.π P).leftOp ⋙ colim
   map {P₁ P₂} f :=
     Functor.whiskerLeft
       ((Functor.whiskeringLeft P₂.Elementsᵒᵖ J C).obj (CategoryOfElements.π P₂).leftOp)
         (colim.pre (NatTrans.mapElements f).op)
-  map_id := sorry
-  map_comp := sorry
+  map_id P := by
+    ext F
+    dsimp
+    ext j
+    rw [colimit.ι_pre]
+    exact (Category.comp_id _).symm
+  map_comp {P₁ P₂ P₃} f g := by
+    ext F
+    dsimp
+    ext j
+    rw [colimit.ι_pre]
+    dsimp only [colimit.pre]
+    -- this will need a cleamup...
+    erw [colimit.ι_desc_assoc, colimit.ι_desc]
+    rfl
 
+@[no_expose]
 noncomputable def weightedColimObjObjι
     (P : Jᵒᵖ ⥤ Type w) (F : J ⥤ C) ⦃j : J⦄ (x : P.obj (op j)) :
     F.obj j ⟶ (weightedColim.obj P).obj F :=
@@ -144,15 +148,15 @@ noncomputable def weightedColimObjObjι
 lemma weightedColim.ι_map_app {P₁ P₂ : Jᵒᵖ ⥤ Type w} (f : P₁ ⟶ P₂) (F : J ⥤ C)
     {j : J} (x : P₁.obj (op j)) :
     weightedColimObjObjι P₁ F x ≫ (weightedColim.map f).app F =
-      weightedColimObjObjι P₂ F (f.app _ x) := by
-  sorry
+      weightedColimObjObjι P₂ F (f.app _ x) :=
+  colimit.ι_desc ..
 
 @[reassoc (attr := simp)]
 lemma weightedColim.ι_obj_map (P : Jᵒᵖ ⥤ Type w) {F₁ F₂ : J ⥤ C} (f : F₁ ⟶ F₂)
     {j : J} (x : P.obj (op j)) :
     weightedColimObjObjι P F₁ x ≫ ((weightedColim.obj P).map f) =
-      f.app j ≫ weightedColimObjObjι P F₂ x := by
-  sorry
+      f.app j ≫ weightedColimObjObjι P F₂ x :=
+  ι_colimMap ..
 
 @[reassoc (attr := simp)]
 lemma weightedColimObjObj_w
@@ -170,6 +174,7 @@ noncomputable abbrev weightedColimCocone (P : Jᵒᵖ ⥤ Type w) (F : J ⥤ C) 
     (fun j x ↦ weightedColimObjObjι P F x)
     (fun j₁ j₂ x f ↦ by simp)
 
+@[no_expose]
 noncomputable def isColimitWeightedColimCocone (P : Jᵒᵖ ⥤ Type w) (F : J ⥤ C) :
     (weightedColimCocone P F).IsColimit :=
   colimit.isColimit _
@@ -182,6 +187,7 @@ lemma weightedColim.hom_ext {P : Jᵒᵖ ⥤ Type w} {F : J ⥤ C} {Z : C}
     f = g :=
   (isColimitWeightedColimCocone P F).hom_ext h
 
+@[no_expose]
 noncomputable def WeightedCocone.IsColimit.iso
     {P : Jᵒᵖ ⥤ Type w} {F : J ⥤ C} {c : WeightedCocone P F}
     (hc : c.IsColimit) :
@@ -231,12 +237,6 @@ noncomputable def weightedColimitAdj₂ :
         homEquiv_naturality_right := sorry }
   unit_whiskerRight_map := sorry
 
--- to be moved in a separate file
--- the dual result for `sigmaConst` is in `Mathlib.CategoryTheory.Limits.Preserves.SigmaConst`
-instance (X : C) {K : Type*} [Category* K] [HasColimitsOfShape K (Type w)] :
-    PreservesLimitsOfShape Kᵒᵖ ((piConst.{w}.obj X)) := by
-  sorry
-
 instance (X : C) {K : Type*} [Category* K] [HasColimitsOfShape K (Type w)] :
     PreservesLimitsOfShape Kᵒᵖ (weightedColimRightAdj.flip.obj X : (Jᵒᵖ ⥤ Type w)ᵒᵖ ⥤ J ⥤ C) := by
   refine ⟨fun {F} ↦ ⟨fun {c} hc ↦ ⟨evaluationJointlyReflectsLimits _ (fun j ↦ ?_)⟩⟩⟩
@@ -260,9 +260,7 @@ noncomputable def weightedColim₂ :
     (J' ⥤ Jᵒᵖ ⥤ Type w) ⥤ (J ⥤ C) ⥤ (J' ⥤ C) :=
   (weightedColim.{w}.flip ⋙ Functor.whiskeringRight _ _ _).flip
 
--- show that `weightedColim₂` also preserves colimits in both variables
--- some additional assumptions may be necessary
-
+-- some additional assumptions may be necessary in the next two sorries
 instance (P : J' ⥤ Jᵒᵖ ⥤ Type w) {K : Type*} [Category* K] :
     PreservesColimitsOfShape K ((weightedColim₂ (C := C)).obj P) := by
   sorry
