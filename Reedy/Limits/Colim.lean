@@ -21,6 +21,7 @@ variable {J₁ J₂ C : Type*} [Category* J₁] [Category* J₂] [Category* C]
 
 -- It seems the following is very much missing from mathlib
 
+-- claim https://github.com/joelriou/reedy/issues/32 before working on this
 set_option backward.defeqAttrib.useBackward true in
 @[simps]
 noncomputable def colim.pre (F : J₁ ⥤ J₂) :
