@@ -185,6 +185,15 @@ lemma ιSigmaExternalProduct_b [NoMaxOrder α] {a : α} (c : r.Cell a) :
       fromExternalProductCoyonedaObjOpYonedaObj c.val := by
   simp [Sigma.ι_desc_assoc, b]
 
+set_option backward.defeqAttrib.useBackward true in
+@[simp]
+lemma ιSigmaExternalProduct_b_app_app_coe [NoMaxOrder α] {a : α} (c : r.Cell a)
+    {U : C} {V : Cᵒᵖ} (i : c.val ⟶ U) (p : V.unop ⟶ c.val) :
+    dsimp% (((b r a).app _).app _ (((r.ιSigmaExternalProduct c).app U).app V ⟨i, p⟩)).val =
+      p ≫ i :=
+  ConcreteCategory.congr_hom (NatTrans.congr_app (NatTrans.congr_app
+    (ιSigmaExternalProduct_b r c) U) V) _
+
 @[reassoc (attr := simp)]
 lemma ιSigmaExternalUnionProd_l {a : α} (c : r.Cell a) :
     r.ιSigmaExternalUnionProd c ≫ l r a =
@@ -223,6 +232,7 @@ lemma isPullback [NoMaxOrder α] (a : α) : IsPullback (t r a) (l r a) (ρ r a) 
               -- https://github.com/joelriou/reedy/issues/27
               sorry))))⟩
 
+set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
 lemma isPushout [NoMaxOrder α] (a : α) : IsPushout (t r a) (l r a) (ρ r a) (b r a) where
   w := w r a
@@ -238,16 +248,17 @@ lemma isPushout [NoMaxOrder α] (a : α) : IsPushout (t r a) (l r a) (ρ r a) (b
             · rw [mono_iff_injective]
               rintro ⟨x, _⟩ ⟨y, _⟩ h
               rwa [Subtype.ext_iff] at h ⊢
-            -- https://github.com/joelriou/reedy/issues/35
-            · ext ⟨x, hx⟩
-              simp only [Order.lt_succ_iff] at hx
+            · ext ⟨f, hf⟩
+              simp only [Order.lt_succ_iff] at hf
               simp only [TypeCat.hom_ofHom, TypeCat.Fun.coe_mk, Set.sup_eq_union, Set.mem_union,
                 Set.mem_range, Subtype.mk.injEq, Subtype.exists, exists_prop, exists_eq_right,
                 Set.mem_univ, iff_true]
-              obtain hx | hx := hx.lt_or_eq
-              · refine Or.inl hx
-              · refine Or.inr ?_
-                sorry
+              obtain hf | hf := hf.lt_or_eq
+              · refine Or.inl hf
+              · obtain ⟨Z, p, i, hp, hi, hpi, h⟩ := r.exists_fac f
+                let c : r.Cell a := ⟨Z, by rwa [← h]⟩
+                exact Or.inr ⟨((r.ιSigmaExternalProduct c).app _).app _ (i, p), by ext; simpa⟩
+            -- https://github.com/joelriou/reedy/issues/35
             · sorry))))⟩
 
 end relativeCellComplex
