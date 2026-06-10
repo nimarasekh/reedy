@@ -100,6 +100,11 @@ noncomputable abbrev ιSigmaExternalUnionProd {a : α} (c : r.Cell a) :
     (r.externalUnionProd c).toFunctor ⟶ sigmaExternalUnionProd r a :=
   Sigma.ι (fun (c : r.Cell a) ↦ (r.externalUnionProd c).toFunctor) c
 
+lemma ιSigmaExternalUnionProd_jointly_surjective {a : α} {U : C} {V : Cᵒᵖ}
+    (x : ((sigmaExternalUnionProd r a).obj U).obj V) :
+    ∃ (c : r.Cell a) (y : _), ((r.ιSigmaExternalUnionProd c).app U).app V y = x := by
+  sorry
+
 noncomputable abbrev sigmaExternalProduct (a : α) : C ⥤ Cᵒᵖ ⥤ Type u :=
   ∐ fun (c : r.Cell a) ↦
     FunctorToTypes.externalProduct (coyoneda.obj (op c.val)) (yoneda.obj c.val)
@@ -109,6 +114,11 @@ noncomputable abbrev ιSigmaExternalProduct {a : α} (c : r.Cell a) :
       sigmaExternalProduct r a :=
   Sigma.ι (fun (c : r.Cell a) ↦
     FunctorToTypes.externalProduct (coyoneda.obj (op c.val)) (yoneda.obj c.val)) c
+
+lemma ιSigmaExternalProduct_jointly_surjective {a : α} {U : C} {V : Cᵒᵖ}
+    (x : ((r.sigmaExternalProduct a).obj U).obj V) :
+    ∃ (c : r.Cell a) (y : _), ((r.ιSigmaExternalProduct c).app U).app V y = x := by
+  sorry
 
 namespace relativeCellComplex
 
