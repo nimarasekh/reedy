@@ -231,6 +231,8 @@ noncomputable def weightedColimitAdj₂ :
         homEquiv_naturality_right := sorry }
   unit_whiskerRight_map := sorry
 
+-- to be moved in a separate file
+-- the dual result for `sigmaConst` is in `Mathlib.CategoryTheory.Limits.Preserves.SigmaConst`
 instance (X : C) {K : Type*} [Category* K] [HasColimitsOfShape K (Type w)] :
     PreservesLimitsOfShape Kᵒᵖ ((piConst.{w}.obj X)) := by
   sorry
