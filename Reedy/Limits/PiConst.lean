@@ -19,6 +19,7 @@ universe v' u' w v u
 
 namespace CategoryTheory.Limits
 
+-- claim https://github.com/joelriou/reedy/issues/33 before working on this
 -- the dual result for `sigmaConst` is in `Mathlib.CategoryTheory.Limits.Preserves.SigmaConst`
 instance {C : Type u} [Category.{v} C] [HasProducts.{w} C] (R : C) :
     PreservesLimitsOfSize.{v', u'} (piConst.{w}.obj R) :=
