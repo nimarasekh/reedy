@@ -212,8 +212,13 @@ variable {G} (f : F ⟶ G)
 @[simps]
 def range : Subfunctor₂ G where
   obj U V := Set.range ((f.app U).app V)
-  map₁ := sorry
-  map₂ := sorry
+  map₁ g V := by
+    rintro x ⟨a, rfl⟩
+    exact ⟨(F.map g).app V a,
+      ConcreteCategory.congr_hom (NatTrans.congr_app (f.naturality g) V) a⟩
+  map₂ U _ _ g := by
+    rintro _ ⟨_, rfl⟩
+    exact ⟨(F.obj U).map g _, CategoryTheory.NatTrans.naturality_apply _ _ _⟩
 
 variable (F) in
 lemma range_id : range (𝟙 F) = ⊤ := by aesop
