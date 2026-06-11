@@ -254,11 +254,18 @@ lemma degHom₁_eq_of_nonMem_range_l {a : α} {c : r.Cell a} {U : C} {V : Cᵒ�
     exact Or.inl (by simpa [c.prop])
   · simp
 
+set_option backward.defeqAttrib.useBackward true in
 lemma degHom₂_eq_of_nonMem_range_l {a : α} {c : r.Cell a} {U : C} {V : Cᵒᵖ}
     (i : c.val ⟶ U) (p : V.unop ⟶ c.val)
     (hip : ((r.ιSigmaExternalProduct c).app U).app V (i, p) ∉ Set.range (((l r a).app U).app V)) :
     r.degHom i = a := by
-  sorry
+  by_contra!
+  have : r.degHom i < a :=
+    lt_of_le_of_ne (by simpa [c.prop] using r.degHom_le_deg i) this
+  refine hip ⟨((r.ιSigmaExternalUnionProd c).app U).app V ⟨⟨i, p⟩, ?_⟩, ?_⟩
+  · rw [Subfunctor.mem_unionExternalProd_obj_obj_iff]
+    exact Or.inr (by simpa [c.prop])
+  · simp
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.defeqAttrib.useBackward true in
@@ -287,14 +294,39 @@ lemma isPushout [NoMaxOrder α] (a : α) : IsPushout (t r a) (l r a) (ρ r a) (b
                 let c : r.Cell a := ⟨Z, by rwa [← h]⟩
                 exact Or.inr ⟨((r.ιSigmaExternalProduct c).app _).app _ (i, p), by ext; simpa⟩
             -- https://github.com/joelriou/reedy/issues/35
-            · intro x y hx hy h
+            · intro x y hx hy fac
               obtain ⟨c, ⟨i, p⟩, rfl⟩ := r.ιSigmaExternalProduct_jointly_surjective x
               obtain ⟨c', ⟨i', p'⟩, rfl⟩ := r.ιSigmaExternalProduct_jointly_surjective y
               dsimp at i p
-              have hp := degHom₁_eq_of_nonMem_range_l _ _ _ hx
-              have hi := degHom₂_eq_of_nonMem_range_l _ _ _ hx
-              -- show that `p ≫ i = p' ≫ i'` and use uniqueness
-              sorry))))⟩
+              simp only [Functor.flip_obj_obj, yoneda_obj_obj, Subtype.ext_iff,
+                ιSigmaExternalProduct_b_app_app_coe] at fac
+              let φ : W₁.MapFactorizationData W₂ (p ≫ i) :=
+                { Z := c.val,
+                  i := p
+                  p := i
+                  hp :=
+                    r.prop_of_degHom_eq_deg_src
+                      (by rw [degHom₂_eq_of_nonMem_range_l _ _ _ hx, c.prop])
+                  hi :=
+                    r.prop_of_degHom_eq_deg_tgt
+                      (by rw [degHom₁_eq_of_nonMem_range_l _ _ _ hx, c.prop]) }
+              let φ' : W₁.MapFactorizationData W₂ (p ≫ i) :=
+                { Z := c'.val,
+                  p := i'
+                  i := p'
+                  hp :=
+                    r.prop_of_degHom_eq_deg_src
+                      (by rw [degHom₂_eq_of_nonMem_range_l _ _ _ hy, c'.prop])
+                  hi :=
+                    r.prop_of_degHom_eq_deg_tgt
+                      (by rw [degHom₁_eq_of_nonMem_range_l _ _ _ hy, c'.prop]) }
+              obtain rfl : c = c' := by ext; exact r.unique_obj φ φ'
+              have := r.unique φ φ'
+              simp only [eqToHom_refl, Category.comp_id, Category.id_comp,
+                exists_const, φ, φ'] at this
+              obtain rfl : p = p' := this.1
+              obtain rfl : i = i' := this.2
+              rfl ))))⟩
 
 end relativeCellComplex
 
