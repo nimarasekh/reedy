@@ -304,7 +304,7 @@ end
 variable (C) in
 set_option backward.defeqAttrib.useBackward true in
 @[simps!]
-noncomputable def weightColimObjYonedaObjIso [HasColimitsOfSize.{v, max u v} C] (j : J) :
+noncomputable def weightedColimObjYonedaObjIso [HasColimitsOfSize.{v, max u v} C] (j : J) :
     weightedColim.obj (yoneda.obj j) ≅ (evaluation J C).obj j :=
   NatIso.ofComponents (fun F ↦
     (WeightedCocone.isColimitYoneda F j).iso)

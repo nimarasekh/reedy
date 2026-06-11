@@ -10,7 +10,7 @@ public import Reedy.Reedy.RelativeCellComplex
 public import Reedy.WeightedLimits.Colimits
 
 /-!
-# Latching and matching objects
+# Latching objects
 
 -/
 
@@ -29,11 +29,7 @@ variable {C : Type u} [SmallCategory C] {W₁ W₂ : MorphismProperty C}
 namespace ReedyStructure
 
 variable (r : ReedyStructure W₁ W₂ α) {D : Type*} [Category D]
-  [HasColimitsOfSize.{u, u} D]
-
-section Latching
-
-variable (X : C)
+  [HasColimitsOfSize.{u, u} D] (X : C)
 
 -- C.4.14
 noncomputable abbrev latching : (C ⥤ D) ⥤ D :=
@@ -41,7 +37,7 @@ noncomputable abbrev latching : (C ⥤ D) ⥤ D :=
 
 noncomputable def latchingι : r.latching X ⟶ (evaluation C D).obj X :=
   weightedColim.map (r.boundaryYonedaObj X).ι ≫
-    (weightColimObjYonedaObjIso D X).hom
+    (weightedColimObjYonedaObjIso D X).hom
 
 noncomputable def relativeLatchingSrc : Arrow (C ⥤ D) ⥤ D :=
   pushout (Functor.whiskerLeft _ (r.latchingι X)) (Functor.whiskerRight Arrow.leftToRight _)
@@ -100,16 +96,6 @@ noncomputable def relativeLatchingMap (X : C) :
 -- C.4.15
 noncomputable def relativeLatchingFunctor (X : C) : Arrow (C ⥤ D) ⥤ Arrow D :=
   Arrow.mkFunctor (r.relativeLatchingMap X)
-
-end Latching
-
-section Matching
-
-noncomputable def relativeMatchingFunctor (X : C) : Arrow (C ⥤ D) ⥤ Arrow D := by
-  have := r
-  sorry
-
-end Matching
 
 end ReedyStructure
 

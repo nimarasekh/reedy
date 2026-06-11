@@ -48,7 +48,7 @@ instance [HasFiniteColimits D] : HasFiniteColimits (r.FunctorCategory D) :=
 instance [HasColimitsOfSize.{u, u} D] : CategoryWithCofibrations (r.FunctorCategory D) where
   cofibrations := r.left (cofibrations D)
 
-instance : CategoryWithFibrations (r.FunctorCategory D) where
+instance [HasLimitsOfSize.{u, u} D] : CategoryWithFibrations (r.FunctorCategory D) where
   fibrations := r.right (fibrations D)
 
 instance : CategoryWithWeakEquivalences (r.FunctorCategory D) where
@@ -57,7 +57,8 @@ instance : CategoryWithWeakEquivalences (r.FunctorCategory D) where
 lemma cofibrations_eq [HasColimitsOfSize.{u, u} D] :
     cofibrations (r.FunctorCategory D) = r.left (cofibrations D) := rfl
 
-lemma fibrations_eq : fibrations (r.FunctorCategory D) = r.right (fibrations D) := rfl
+lemma fibrations_eq [HasLimitsOfSize.{u, u} D] :
+    fibrations (r.FunctorCategory D) = r.right (fibrations D) := rfl
 
 lemma weakEquivalences_eq :
     weakEquivalences (r.FunctorCategory D) = (weakEquivalences D).functorCategory C := rfl
@@ -67,13 +68,13 @@ lemma trivialCofibrations_eq [HasColimitsOfSize.{u, u} D] :
     trivialCofibrations (r.FunctorCategory D) = r.left (trivialCofibrations D) := sorry
 
 -- C.5.13 (ii)
-lemma trivialFibrations_eq :
+lemma trivialFibrations_eq [HasLimitsOfSize.{u, u} D] :
     trivialFibrations (r.FunctorCategory D) = r.right (trivialFibrations D) := sorry
 
 instance : (weakEquivalences (r.FunctorCategory D)).HasTwoOutOfThreeProperty :=
   inferInstanceAs (HasTwoOutOfThreeProperty ((weakEquivalences D).functorCategory C))
 
-variable [HasColimitsOfSize.{u, u} D]
+variable [HasColimitsOfSize.{u, u} D] [HasLimitsOfSize.{u, u} D]
 
 instance :
     IsWeakFactorizationSystem (cofibrations (r.FunctorCategory D)) (trivialFibrations _) := by

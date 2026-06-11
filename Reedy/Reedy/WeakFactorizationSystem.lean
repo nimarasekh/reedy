@@ -10,6 +10,7 @@ public import Reedy.Arrow.ObjectProperty
 public import Reedy.MorphismProperty.Retracts
 public import Reedy.ObjectProperty.Retracts
 public import Reedy.Reedy.Latching
+public import Reedy.Reedy.Matching
 
 /-!
 # Weak factorization systems on the category of functors
@@ -42,7 +43,7 @@ namespace ReedyStructure
 open MorphismProperty
 
 variable (r : ReedyStructure W₁ W₂ α) {D : Type*} [Category D]
-  [HasColimitsOfSize.{u, u} D]
+  [HasColimitsOfSize.{u, u} D] [HasLimitsOfSize.{u, u} D]
   (P₁ : MorphismProperty D) (P₂ : MorphismProperty D)
 
 def left : MorphismProperty (C ⥤ D) :=

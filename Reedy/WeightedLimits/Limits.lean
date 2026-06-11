@@ -26,11 +26,17 @@ variable {J' : Type u} [Category.{v} J'] {C : Type*} [Category* C]
 -- TODO: dualize the API from the `Colimits.lean` file and
 -- obtain the parametrized adjunction
 
--- in this file the weights shall be functors `J' ⥤ Type w`
+noncomputable def weightedLim : (J' ⥤ Type w)ᵒᵖ ⥤ (J' ⥤ C) ⥤ C := sorry
 
 noncomputable def weightedLim₂ :
     (J' ⥤ Jᵒᵖ ⥤ Type w)ᵒᵖ ⥤ (J' ⥤ C) ⥤ (J ⥤ C) := by
   sorry
+
+variable (C) in
+noncomputable def weightedLimObjCoyonedaObjIso (j' : J') :
+    weightedLim.obj (op (coyoneda.obj (op j'))) ≅ (evaluation J' C).obj j' :=
+  sorry
+
 
 variable [HasColimitsOfSize.{w} C]
 
