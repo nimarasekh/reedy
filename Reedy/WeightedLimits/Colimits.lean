@@ -244,7 +244,7 @@ instance (X : C) {K : Type*} [Category* K] [HasColimitsOfShape K (Type w)] :
     apply preservesLimit_op
   exact isLimitOfPreserves (((evaluation Jᵒᵖ (Type w)).obj (op j)).op ⋙ piConst.obj X) hc
 
-instance (F : J ⥤ C) {K : Type*} [Category* K] [HasColimitsOfShape K (Type w)] :
+instance test (F : J ⥤ C) {K : Type*} [Category* K] [HasColimitsOfShape K (Type w)] :
     PreservesColimitsOfShape K (weightedColim.flip.obj F : (Jᵒᵖ ⥤ Type w) ⥤ C) :=
   weightedColimitAdj₂.preservesColimitsOfShape_flip_obj _ _
 
@@ -260,14 +260,17 @@ noncomputable def weightedColim₂ :
     (J' ⥤ Jᵒᵖ ⥤ Type w) ⥤ (J ⥤ C) ⥤ (J' ⥤ C) :=
   (weightedColim.{w}.flip ⋙ Functor.whiskeringRight _ _ _).flip
 
--- some additional assumptions may be necessary in the next two sorries
-instance (P : J' ⥤ Jᵒᵖ ⥤ Type w) {K : Type*} [Category* K] :
-    PreservesColimitsOfShape K ((weightedColim₂ (C := C)).obj P) := by
-  sorry
+instance (P : J' ⥤ Jᵒᵖ ⥤ Type w) {K : Type*} [Category* K] [HasColimitsOfShape K C] :
+    PreservesColimitsOfShape K ((weightedColim₂ (C := C)).obj P) where
+  preservesColimit := ⟨fun hc ↦
+    ⟨evaluationJointlyReflectsColimits _
+      (fun j' ↦ isColimitOfPreserves ((weightedColim (C := C)).obj (P.obj j')) hc)⟩⟩
 
-instance (F : J ⥤ C) {K : Type*} [Category* K] :
-    PreservesColimitsOfShape K ((weightedColim₂ (J' := J')).flip.obj F) := by
-  sorry
+instance (F : J ⥤ C) {K : Type*} [Category* K] [HasProducts.{w} C]
+    [HasColimitsOfShape K (Type w)] :
+    PreservesColimitsOfShape K ((weightedColim₂ (J' := J')).flip.obj F) where
+  preservesColimit := ⟨fun hc ↦ ⟨evaluationJointlyReflectsColimits _
+    (fun j' ↦ (isColimitOfPreserves ((evaluation _ _ ).obj j' ⋙ weightedColim.flip.obj F) hc))⟩⟩
 
 end
 
