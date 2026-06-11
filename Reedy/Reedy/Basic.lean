@@ -63,6 +63,16 @@ lemma le₂ {X Y : C} (f : X ⟶ Y) (hf : W₂ f) : r.deg X ≤ r.deg Y := by
     rfl
   · exact (r.lt₂ f hf hf').le
 
+lemma identities_of_prop_of_eq {X Y : C} {f : X ⟶ Y} (hf : W₁ f) (h : r.deg X = r.deg Y) :
+    MorphismProperty.identities _ f := by
+  by_contra!
+  exact h.not_gt (r.lt₁ _ hf this)
+
+lemma identities_of_prop_of_eq' {X Y : C} {f : X ⟶ Y} (hf : W₂ f) (h : r.deg X = r.deg Y) :
+    MorphismProperty.identities _ f := by
+  by_contra!
+  exact h.not_lt (r.lt₂ _ hf this)
+
 include r in
 lemma subsingleton_mapFactorizationData ⦃X Y : C⦄ (f : X ⟶ Y) :
     Subsingleton (W₁.MapFactorizationData W₂ f) := by
@@ -74,6 +84,20 @@ noncomputable def mapFactorizationData {X Y : C} (f : X ⟶ Y) :
     W₁.MapFactorizationData W₂ f := by
   letI := (r.nonempty_unique f).some
   exact default
+
+include r in
+lemma unique_obj {X Y : C} {f : X ⟶ Y} (fac fac' : W₁.MapFactorizationData W₂ f) :
+    fac.Z = fac'.Z := by
+  have := r.subsingleton_mapFactorizationData f
+  obtain rfl : fac = fac' := Subsingleton.elim _ _
+  rfl
+
+include r in
+lemma unique {X Y : C} {f : X ⟶ Y} (fac fac' : W₁.MapFactorizationData W₂ f) :
+    ∃ (h : fac.Z = fac'.Z), fac.i = fac'.i ≫ eqToHom h.symm ∧ fac.p = eqToHom h ≫ fac'.p := by
+  have := r.subsingleton_mapFactorizationData f
+  obtain rfl : fac = fac' := Subsingleton.elim _ _
+  simp
 
 @[no_expose]
 noncomputable def degHom {X Y : C} (f : X ⟶ Y) : α := r.deg (r.mapFactorizationData f).Z
@@ -160,6 +184,20 @@ lemma degHom_comp_le' {X Y Z : C} (f : X ⟶ Y) (g : Y ⟶ Z) :
   have ⟨_, g₁, g₂, _, _, h_fac, h_deg⟩ := r.exists_fac g
   rw [h_deg, ← h_fac, <- Category.assoc]
   exact r.degHom_le (f ≫ g₁) g₂
+
+lemma prop_of_degHom_eq_deg_src {X Y : C} {f : X ⟶ Y} (hf : r.degHom f = r.deg X) :
+    W₂ f := by
+  obtain ⟨Z, p, i, hp, hi, fac, h⟩ := r.exists_fac f
+  obtain ⟨_⟩ := r.identities_of_prop_of_eq hp (by aesop)
+  obtain rfl : i = f := by simpa using fac
+  exact hi
+
+lemma prop_of_degHom_eq_deg_tgt {X Y : C} {f : X ⟶ Y} (hf : r.degHom f = r.deg Y) :
+    W₁ f := by
+  obtain ⟨Z, p, i, hp, hi, fac, h⟩ := r.exists_fac f
+  obtain ⟨_⟩ := r.identities_of_prop_of_eq' hi (by aesop)
+  obtain rfl : p = f := by simpa using fac
+  exact hp
 
 end ReedyStructure
 
